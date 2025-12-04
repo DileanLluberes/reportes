@@ -2,45 +2,52 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Reportes HTML</title>
+  <title>Listado de reportes</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
-    .box {
-      background: #f1f1f1;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
+    a {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
+  <h2>Reportes disponibles</h2>
 
-<h2>Reportes HTML</h2>
-<div id="list"></div>
+  <div id="lista">Cargando archivos...</div>
 
-<script>
-const base = "https://dileanlluberes.github.io/reportes/";
-const files = [
-  "report.html",
-  "report 2.html"
-];
+  <script>
+    // URL de la API de GitHub para listar archivos del repositorio
+    const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
 
-const container = document.getElementById("list");
+    fetch(apiURL)
+      .then(response => response.json())
+      .then(files => {
+        const contenedor = document.getElementById("lista");
+        contenedor.innerHTML = ""; // limpia "Cargando..."
 
-files.forEach(name => {
-  const safeName = name.replace(" ", "%20"); 
-  const url = base + safeName;
-  
-  const div = document.createElement("div");
-  div.className = "box";
-  div.innerHTML = `<a href="${url}" target="_blank">${name}</a>`;
-  
-  container.appendChild(div);
-});
-</script>
+        files.forEach(file => {
+          // Mostrar solo archivos .html (y ocultar index.html)
+          if (file.name.endsWith(".html") && file.name !== "index.html") {
+
+            const link = document.createElement("a");
+            link.href = file.name;  // apunta al archivo en GitHub Pages
+            link.textContent = file.name.replace(".html", "");
+            link.target = "_blank";
+
+            contenedor.appendChild(link);
+          }
+        });
+      })
+      .catch(err => {
+        document.getElementById("lista").textContent = "Error cargando archivos.";
+        console.error("Error:", err);
+      });
+  </script>
 
 </body>
 </html>
