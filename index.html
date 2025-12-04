@@ -1,47 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reportes</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    a { display: block; margin-bottom: 10px; font-size: 18px; }
-  </style>
+  <title>Reportes HTML</title>
 </head>
 <body>
-
-  <h2>Reportes disponibles</h2>
-  <div id="lista">Cargando...</div>
+  <h1>Reportes Disponibles</h1>
+  <ul id="file-list">Cargando…</ul>
 
   <script>
-    const proxy = "https://api.allorigins.win/raw?url=";
-    const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
+    async function getHtmlFiles() {
+      const owner = 'DileanLluberes';
+      const repo = 'reportes';
+      const path = ''; // deja vacío si es la raíz, o pon carpeta si es subcarpeta
+      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
-    fetch(proxy + apiURL)
-      .then(r => r.json())
-      .then(files => {
-        const cont = document.getElementById("lista");
-        cont.innerHTML = "";
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('Error al obtener los contenidos: ' + resp.status);
+        let items = await resp.json();
 
-        files.forEach(file => {
-          if (file.name.endsWith(".html") && file.name !== "index.html") {
-            const a = document.createElement("a");
-            a.href = file.name;
-            a.textContent = file.name.replace(".html", "");
-            a.target = "_blank";
-            cont.appendChild(a);
-          }
+        // Filtrar solo archivos .html y excluir index.html
+        items = items.filter(item => item.type === 'file' && item.name.endsWith('.html') && item.name !== 'index.html');
+
+        // Obtener fechas de última modificación usando la API de commits
+        const filesWithDates = await Promise.all(items.map(async item => {
+          const commitsUrl = `https://api.github.com/repos/${owner}/${repo}/commits?path=${item.path}&per_page=1`;
+          const commitResp = await fetch(commitsUrl);
+          const commitData = await commitResp.json();
+          const date = commitData[0]?.commit?.committer?.date || '1970-01-01T00:00:00Z';
+          return {...item, date};
+        }));
+
+        // Ordenar por fecha descendente (más reciente primero)
+        filesWithDates.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Mostrar en la página
+        const ul = document.getElementById('file-list');
+        ul.innerHTML = '';
+        filesWithDates.forEach(file => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          // Enlace directo a GitHub Pages
+          a.href = file.name;
+          a.textContent = `${file.name} (última modificación: ${new Date(file.date).toLocaleString()})`;
+          a.target = '_blank';
+          li.appendChild(a);
+          ul.appendChild(li);
         });
 
-        if (cont.innerHTML === "") {
-          cont.textContent = "No hay archivos HTML.";
+        if (!ul.hasChildNodes()) {
+          ul.innerHTML = '<li>No hay archivos .html disponibles.</li>';
         }
-      })
-      .catch(err => {
-        document.getElementById("lista").textContent = "Error cargando archivos.";
-        console.error(err);
-      });
-  </script>
 
+      } catch (err) {
+        console.error(err);
+        document.getElementById('file-list').innerText = 'Error al cargar archivos.';
+      }
+    }
+
+    getHtmlFiles();
+  </script>
 </body>
 </html>
