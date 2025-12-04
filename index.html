@@ -2,43 +2,44 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Reportes</title>
+  <title>Reportes HTML</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    a { display: block; margin-bottom: 10px; font-size: 18px; }
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+    .box {
+      background: #f1f1f1;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
 
-<h2>Reportes disponibles</h2>
-<div id="lista">Cargando...</div>
+<h2>Reportes HTML</h2>
+<div id="list"></div>
 
 <script>
-  const jsonURL = "https://dileanlluberes.github.io/reportes/list.json";
+const base = "https://dileanlluberes.github.io/reportes/";
+const files = [
+  "report.html",
+  "report 2.html"
+];
 
-  fetch(jsonURL)
-    .then(r => r.json())
-    .then(files => {
-      const cont = document.getElementById("lista");
-      cont.innerHTML = "";
+const container = document.getElementById("list");
 
-      files.forEach(name => {
-        if (name !== "index.html") {
-          let a = document.createElement("a");
-          a.href = name;
-          a.textContent = name.replace(".html", "");
-          a.target = "_blank";
-          cont.appendChild(a);
-        }
-      });
-
-      if (files.length === 0) {
-        cont.textContent = "No hay archivos HTML disponibles.";
-      }
-    })
-    .catch(err => {
-      document.getElementById("lista").textContent = "Error cargando archivos.";
-    });
+files.forEach(name => {
+  const safeName = name.replace(" ", "%20"); 
+  const url = base + safeName;
+  
+  const div = document.createElement("div");
+  div.className = "box";
+  div.innerHTML = `<a href="${url}" target="_blank">${name}</a>`;
+  
+  container.appendChild(div);
+});
 </script>
 
 </body>
