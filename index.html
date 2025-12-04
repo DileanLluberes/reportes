@@ -4,42 +4,61 @@
   <meta charset="UTF-8">
   <title>Reportes HTML</title>
   <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-    }
+    body { font-family: Arial; padding: 20px; }
     .box {
-      background: #f1f1f1;
-      padding: 15px;
+      background: #f2f2f2;
+      padding: 12px;
       margin: 10px 0;
-      border-radius: 10px;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
 
-<h2>Reportes HTML</h2>
-<div id="list"></div>
+<h2>Reportes disponibles</h2>
+<div id="list">Cargando...</div>
 
 <script>
-const base = "https://dileanlluberes.github.io/reportes/";
-const files = [
-  "report.html",
-  "report 2.html"
-];
+// Ruta API pública de GitHub para listar archivos del repo
+const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
 
-const container = document.getElementById("list");
+// Base que permite mostrar HTML dentro del iframe (compatibles)
+const base = "https://rawcdn.githack.com/DileanLluberes/reportes/main/";
 
-files.forEach(name => {
-  const safeName = name.replace(" ", "%20"); 
-  const url = base + safeName;
-  
-  const div = document.createElement("div");
-  div.className = "box";
-  div.innerHTML = `<a href="${url}" target="_blank">${name}</a>`;
-  
-  container.appendChild(div);
-});
+async function cargarArchivos() {
+  const container = document.getElementById("list");
+
+  try {
+    const response = await fetch(apiURL);
+    const files = await response.json();
+
+    // Filtrar solo archivos .html
+    const htmlFiles = files.filter(f => f.name.endsWith(".html"));
+
+    // Si no hay archivos, muestra algo
+    if (htmlFiles.length === 0) {
+      container.innerHTML = "No hay archivos HTML disponibles.";
+      return;
+    }
+
+    container.innerHTML = "";
+
+    htmlFiles.forEach(file => {
+      const url = base + encodeURIComponent(file.name);
+
+      const div = document.createElement("div");
+      div.className = "box";
+      div.innerHTML = `<a href="${url}" target="_blank">${file.name}</a>`;
+      
+      container.appendChild(div);
+    });
+
+  } catch (e) {
+    container.innerHTML = "Error cargando archivos.";
+  }
+}
+
+cargarArchivos();
 </script>
 
 </body>
