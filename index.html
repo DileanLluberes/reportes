@@ -2,65 +2,51 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Reportes</title>
+  <title>Listado de reportes</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    .box {
-      background: #f2f2f2;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    a {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
+  <h2>Reportes disponibles</h2>
 
-<h2>Reportes disponibles</h2>
-<div id="list">Cargando...</div>
+  <div id="lista"></div>
 
-<script>
-// Ruta API pública de GitHub para listar archivos del repo
-const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
+  <script>
+    // URL de la API de GitHub para listar archivos
+    const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
 
-// Base que permite mostrar HTML dentro del iframe (compatibles)
-const base = "https://rawcdn.githack.com/DileanLluberes/reportes/main/";
+    fetch(apiURL)
+      .then(res => res.json())
+      .then(files => {
+        const contenedor = document.getElementById("lista");
 
-async function cargarArchivos() {
-  const container = document.getElementById("list");
+        files.forEach(file => {
+          // Mostrar solo .html y ocultar index.html
+          if (file.name.endsWith(".html") && file.name !== "index.html") {
 
-  try {
-    const response = await fetch(apiURL);
-    const files = await response.json();
+            const link = document.createElement("a");
+            link.href = file.name;
+            link.textContent = file.name.replace(".html", ""); // opcional, limpia el nombre
+            link.target = "_blank";
 
-    // Filtrar solo archivos .html
-    const htmlFiles = files.filter(f => f.name.endsWith(".html"));
-
-    // Si no hay archivos, muestra algo
-    if (htmlFiles.length === 0) {
-      container.innerHTML = "No hay reportes disponibles.";
-      return;
-    }
-
-    container.innerHTML = "";
-
-    htmlFiles.forEach(file => {
-      const url = base + encodeURIComponent(file.name);
-
-      const div = document.createElement("div");
-      div.className = "box";
-      div.innerHTML = `<a href="${url}" target="_blank">${file.name}</a>`;
-      
-      container.appendChild(div);
-    });
-
-  } catch (e) {
-    container.innerHTML = "Error cargando archivos.";
-  }
-}
-
-cargarArchivos();
-</script>
+            contenedor.appendChild(link);
+          }
+        });
+      })
+      .catch(err => {
+        document.getElementById("lista").textContent = "Error cargando archivos.";
+        console.error(err);
+      });
+  </script>
 
 </body>
 </html>
-
