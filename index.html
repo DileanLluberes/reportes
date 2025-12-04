@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Reportes HTML</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-    }
-    .box {
-      background: #f1f1f1;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A. ALBA SANCHEZ & ASOCIADOS - Inicio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h2>Reportes HTML</h2>
-<div id="list"></div>
+    <div class="header-top">
+        <div class="search-icon">🔍</div>
+    </div>
 
-<script>
-const base = "https://dileanlluberes.github.io/reportes/";
-const files = [
-  "report.html",
-  "report 2.html"
-];
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="logo_as.png.jfif" alt="Logo AS" class="logo-sidebar">
+            </div>
+            <nav>
+                <h2>Página</h2>
+                <ul>
+                    <li class="active-link">
+                        <span class="arrow">^</span>
+                        <a href="index.html">Página principal</a>
+                    </li>
+                    <li><a href="planta_itabo.html">PLANTA ITABO</a></li>
+                    <li><a href="planta_jobo_dulce.html">PLANTA JOBO DULCE</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-const container = document.getElementById("list");
+        <main class="main-content">
+            <h1 class="main-title">A. ALBA SANCHEZ & ASOCIADOS</h1>
 
-files.forEach(name => {
-  const safeName = name.replace(" ", "%20"); 
-  const url = base + safeName;
-  
-  const div = document.createElement("div");
-  div.className = "box";
-  div.innerHTML = `<a href="${url}" target="_blank">${name}</a>`;
-  
-  container.appendChild(div);
-});
-</script>
+            <div class="intro-section">
+                <div class="plant-card">
+                    <img src="planta de asfalto.jpg" alt="Planta ITABO">
+                    <a href="planta_itabo.html" class="plant-button">PLANTA ITABO</a>
+                </div>
+
+                <div class="plant-card">
+                    <img src="jodul.jpg" alt="Planta JOBO DULCE">
+                    <a href="planta_jobo_dulce.html" class="plant-button">PLANTA JOBO DULCE</a>
+                </div>
+            </div>
+            </main>
+    </div>
 
 </body>
 </html>
-
-
-
