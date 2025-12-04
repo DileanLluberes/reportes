@@ -22,6 +22,7 @@
 <div id="list"></div>
 
 <script>
+const base = "https://dileanlluberes.github.io/reportes/";
 const files = [
   "report.html",
   "report 2.html"
@@ -30,8 +31,8 @@ const files = [
 const container = document.getElementById("list");
 
 files.forEach(name => {
-  const safeName = name.replace(" ", "%20"); // codifica el espacio
-  const url = `https://raw.githubusercontent.com/DileanLluberes/reportes/main/${safeName}`;
+  const safeName = name.replace(" ", "%20"); 
+  const url = base + safeName;
   
   const div = document.createElement("div");
   div.className = "box";
@@ -43,5 +44,6 @@ files.forEach(name => {
 
 </body>
 </html>
+
 
 
