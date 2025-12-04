@@ -2,50 +2,44 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Listado de reportes</title>
+  <title>Reportes</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    a {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    a { display: block; margin-bottom: 10px; font-size: 18px; }
   </style>
 </head>
 <body>
-  <h2>Reportes disponibles</h2>
 
-  <div id="lista">Cargando archivos...</div>
+  <h2>Reportes disponibles</h2>
+  <div id="lista">Cargando...</div>
 
   <script>
-    // URL de la API de GitHub para listar archivos del repositorio
+    const proxy = "https://api.allorigins.win/raw?url=";
     const apiURL = "https://api.github.com/repos/DileanLluberes/reportes/contents/";
 
-    fetch(apiURL)
-      .then(response => response.json())
+    fetch(proxy + apiURL)
+      .then(r => r.json())
       .then(files => {
-        const contenedor = document.getElementById("lista");
-        contenedor.innerHTML = ""; // limpia "Cargando..."
+        const cont = document.getElementById("lista");
+        cont.innerHTML = "";
 
         files.forEach(file => {
-          // Mostrar solo archivos .html (y ocultar index.html)
           if (file.name.endsWith(".html") && file.name !== "index.html") {
-
-            const link = document.createElement("a");
-            link.href = file.name;  // apunta al archivo en GitHub Pages
-            link.textContent = file.name.replace(".html", "");
-            link.target = "_blank";
-
-            contenedor.appendChild(link);
+            const a = document.createElement("a");
+            a.href = file.name;
+            a.textContent = file.name.replace(".html", "");
+            a.target = "_blank";
+            cont.appendChild(a);
           }
         });
+
+        if (cont.innerHTML === "") {
+          cont.textContent = "No hay archivos HTML.";
+        }
       })
       .catch(err => {
         document.getElementById("lista").textContent = "Error cargando archivos.";
-        console.error("Error:", err);
+        console.error(err);
       });
   </script>
 
